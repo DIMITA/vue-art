@@ -15,18 +15,18 @@ prog
 .argument('<type>', 'type of template that you want to generate', /^store|page|component$/)
     .argument('[name]', 'Environment to deploy on')
 
-.option('--skip-test <lines>', 'Skip test')
+.option('--path <lines>', 'Skip test')
 
 .action(function(args, options, logger) {
     if (args.type === 'page' || args.type === "component") {
 
         const entryPath = path.resolve(__dirname, 'templates', args.type + '.txt')
         const entryContent = fs.readFileSync(entryPath)
-        fs.writeFile('./src/' + args.type + 's/' + args.name + '.vue', entryContent, (err) => { logger.error(err) })
+        fs.writeFile(options.path + '/' + args.name + '.vue' || './src/' + args.type + 's/' + args.name + '.vue', entryContent, (err) => { logger.error(err) })
 
     } else {
 
-        ncp(path.resolve(__dirname, 'templates', args.type), path.resolve('./src', args.type, args.name), function(err) {
+        ncp(path.resolve(__dirname, 'templates', args.type), options.path + '/' + args.name || path.resolve('./src', args.type, args.name), function(err) {
             err ? logger.error(err) : logger.info(`the ${args.type} ${args.name} was generated`)
 
         })
